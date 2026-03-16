@@ -1,0 +1,368 @@
+openapi: 3.0.3
+info:
+  title: CafThe V2 API
+  version: 1.0.0
+  description: API backend CafThe V2 (Node.js, Express, MySQL)
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Health
+  - name: Clients
+  - name: Employes
+  - name: Articles
+  - name: Orders
+  - name: Stats
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        "200":
+          description: API healthy
+  /api/clients/register:
+    post:
+      tags: [Clients]
+      summary: Register a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nom, prenom, email, mot_de_passe]
+              properties:
+                nom: { type: string }
+                prenom: { type: string }
+                email: { type: string, format: email }
+                mot_de_passe: { type: string }
+      responses:
+        "201": { description: Client created }
+        "400": { description: Validation error }
+  /api/clients/login:
+    post:
+      tags: [Clients]
+      summary: Login a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, mot_de_passe]
+              properties:
+                email: { type: string, format: email }
+                mot_de_passe: { type: string }
+      responses:
+        "200": { description: Login success }
+        "401": { description: Invalid credentials }
+  /api/clients/password/request-reset:
+    post:
+      tags: [Clients]
+      summary: Request password reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200": { description: Reset request accepted }
+  /api/clients/password/reset:
+    post:
+      tags: [Clients]
+      summary: Reset client password with temporary token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, nouveau_mdp]
+              properties:
+                token: { type: string }
+                nouveau_mdp: { type: string }
+      responses:
+        "200": { description: Password reset success }
+        "400": { description: Invalid or expired token }
+  /api/clients/me:
+    get:
+      tags: [Clients]
+      summary: Get current client
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: Authenticated client }
+        "401": { description: Unauthorized }
+  /api/clients/me/history:
+    get:
+      tags: [Clients]
+      summary: Get unified client history for authenticated client
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: History returned }
+  /api/clients/{id}/history:
+    get:
+      tags: [Clients]
+      summary: Get unified history for a specific client (dashboard)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: History returned }
+        "403": { description: Forbidden }
+  /api/employes/login:
+    post:
+      tags: [Employes]
+      summary: Login employee (vendeur/admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, mot_de_passe]
+              properties:
+                email: { type: string, format: email }
+                mot_de_passe: { type: string }
+      responses:
+        "200": { description: Login success }
+        "401": { description: Invalid credentials }
+  /api/employes/me:
+    get:
+      tags: [Employes]
+      summary: Get authenticated employee profile
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: Employee profile }
+  /api/articles:
+    get:
+      tags: [Articles]
+      summary: List products
+      responses:
+        "200": { description: Product list }
+    post:
+      tags: [Articles]
+      summary: Create product
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArticleInput"
+      responses:
+        "201": { description: Product created }
+  /api/articles/categorie/{categorie}:
+    get:
+      tags: [Articles]
+      summary: List products by category
+      parameters:
+        - in: path
+          name: categorie
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Product list }
+  /api/articles/{id}:
+    get:
+      tags: [Articles]
+      summary: Get product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Product details }
+        "404": { description: Not found }
+    put:
+      tags: [Articles]
+      summary: Update product
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArticleInput"
+      responses:
+        "200": { description: Product updated }
+    delete:
+      tags: [Articles]
+      summary: Soft delete product
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Product disabled }
+  /api/orders/my:
+    get:
+      tags: [Orders]
+      summary: Get authenticated client orders
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: Orders returned }
+  /api/orders/online:
+    post:
+      tags: [Orders]
+      summary: Create online order and update stock
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201": { description: Order created }
+        "409": { description: Stock conflict }
+  /api/orders/magasin:
+    post:
+      tags: [Orders]
+      summary: Create in-store sale and update stock/payment
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/OrderInput"
+                - type: object
+                  required: [id_client]
+                  properties:
+                    id_client: { type: integer }
+      responses:
+        "201": { description: Sale created }
+  /api/orders/{id}/status:
+    patch:
+      tags: [Orders]
+      summary: Update order status
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [statut_commande]
+              properties:
+                statut_commande: { type: string }
+      responses:
+        "200": { description: Status updated }
+  /api/stats/kpi:
+    get:
+      tags: [Stats]
+      summary: KPI reporting
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: KPI payload }
+  /api/stats/top-products:
+    get:
+      tags: [Stats]
+      summary: Top selling products
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses:
+        "200": { description: Top products payload }
+  /api/stats/exports/commandes.csv:
+    get:
+      tags: [Stats]
+      summary: Export orders as CSV
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: CSV file }
+  /api/stats/exports/commandes.xls:
+    get:
+      tags: [Stats]
+      summary: Export orders in Excel-compatible format
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: XLS file }
+  /api/stats/exports/produits.csv:
+    get:
+      tags: [Stats]
+      summary: Export products as CSV
+      security:
+        - BearerAuth: []
+      responses:
+        "200": { description: CSV file }
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ArticleInput:
+      type: object
+      required:
+        - nom_produit
+        - categorie
+        - prix_ht
+        - type_vente
+        - taux_tva
+        - stock
+      properties:
+        nom_produit: { type: string }
+        description: { type: string }
+        categorie: { type: string }
+        prix_ht: { type: number }
+        type_vente: { type: string }
+        taux_tva: { type: number }
+        images: { type: string }
+        stock: { type: integer }
+        origine: { type: string }
+    OrderLineInput:
+      type: object
+      required: [id_article, quantite]
+      properties:
+        id_article: { type: integer }
+        quantite: { type: integer, minimum: 1 }
+    OrderInput:
+      type: object
+      required: [mode_paiement, items]
+      properties:
+        mode_paiement: { type: string }
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/OrderLineInput"

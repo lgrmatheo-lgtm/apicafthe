@@ -1,0 +1,14 @@
+/img/products/1-arabica.jpg | https://unsplash.com/photos/6xtK1Pn-PTI/download?force=true
+/img/products/2-robusta.jpg | https://images.unsplash.com/photo-1481391032119-d89fee407e44?auto=format&fit=crop&w=1200&q=80
+/img/products/3-moka.jpg | https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80
+/img/products/4-santos.jpg | https://images.unsplash.com/photo-1554906110-c83e812733f7?auto=format&fit=crop&w=1200&q=80
+/img/products/5-filtre.jpg | https://unsplash.com/photos/kLaCXcM6kIA/download?force=true
+/img/products/6-espresso.jpg | https://unsplash.com/photos/0EWWLx_etkw/download?force=true
+/img/products/7-earl-grey.jpg | https://unsplash.com/photos/dXMydfrmUB8/download?force=true
+/img/products/8-darjeeling.jpg | https://images.unsplash.com/photo-1753617868081-a0ff513695a5?auto=format&fit=crop&w=1200&q=80
+/img/products/9-sencha.jpg | https://unsplash.com/photos/BjKEN6fAhrc/download?force=true
+/img/products/10-matcha.jpg | https://unsplash.com/photos/C_vE8ZIHJ3Y/download?force=true
+/img/products/11-gunpowder.jpg | https://images.unsplash.com/photo-1755184108959-47223012b460?auto=format&fit=crop&w=1200&q=80
+/img/products/12-bai-mu-dan.jpg | https://unsplash.com/photos/JnymxncvrrY/download?force=true
+/img/products/13-mug.jpg | https://unsplash.com/photos/Z-hvocTfR_s/download?force=true
+/img/products/14-theiere.jpg | https://unsplash.com/photos/IFPMKh8C02I/download?force=true
