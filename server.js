@@ -49,9 +49,14 @@ app.use(express.static("public"));
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  process.env.FRONT_END_URL,
+  ...(process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(",") : []),
+  "https://cafthefrontend.mlagier.dev-campus.fr",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-];
+]
+  .map((origin) => (typeof origin === "string" ? origin.trim() : origin))
+  .filter(Boolean);
 
 app.use(
   cors({
@@ -66,7 +71,7 @@ app.use(
       }
       return callback(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   }),
 );
